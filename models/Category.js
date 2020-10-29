@@ -10,7 +10,6 @@ Category.init(
       primaryKey: true,
       autoIncrement: true
     },
-    // define a username column
     category_name: {
       type: DataTypes.STRING,
       allowNull: false,
