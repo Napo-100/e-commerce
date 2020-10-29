@@ -5,6 +5,8 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // get all products
 router.get('/', (req, res) => {
+  // find all products
+  // be sure to include its associated Category and Tag data
   Product.findAll({
     attributes: ['product_name', 'id'],
     include: [
@@ -21,12 +23,13 @@ router.get('/', (req, res) => {
       console.log(err);
       res.status(500).json(err)
     });
-  // find all products
-  // be sure to include its associated Category and Tag data
+  
 });
 
 // get one product
 router.get('/:id', (req, res) => {
+  // find a single product by its `id`
+  // be sure to include its associated Category and Tag data
   Product.findOne({
     where: {
       id: req.params.id,
@@ -51,13 +54,10 @@ router.get('/:id', (req, res) => {
     console.log(err);
     res.status(500).json(err)
   });
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
 });
 
 // create new product
 router.post('/', (req, res) => {
-
   Product.create(req.body)
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
@@ -89,6 +89,11 @@ router.put('/:id', (req, res) => {
     },
   })
     .then((product) => {
+      if (!product) {
+        res.status(404).json({ message: 'No tag found with this id' });
+        return;
+      }
+      res.json(product);
       // find all associated tags from ProductTag
       return ProductTag.findAll({ where: { product_id: req.params.id } });
     })
